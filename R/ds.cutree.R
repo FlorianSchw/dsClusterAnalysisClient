@@ -4,10 +4,16 @@
 #' @details The function calls the server-side function \code{cutreeDS} that computes the
 #' clusters for a given number of clusters k or height h, and assigns the new object to the server-side.
 #' The new object is named by the user using the \code{newobj} argument, otherwise it is named \code{cutree.newobj} by default.
-#' @param tree is a string character specifying the name of the hclust object. k and h specify the number of clusters or height of the tree at which
-#' the tree should be cut.
+#' @param tree is a string character specifying the name of the hclust object 
+#' @param k specifies the number of clusters in which the tree should be cut
+#' @param h specifies the height of a tree at which the tree should be cut
+#' @param newobj is the name of the new object which is created with this function
+#' @param datasources a list of \code{\link{DSConnection-class}} objects obtained after login
 #' @return the object specified by the \code{newobj} argument of \code{ds.cutree} or default name \code{cutree.newobj}
 #' @author Florian Schwarz for the German Institute of Human Nutrition
+#' @import DSI
+#' @import dsBaseClient
+#' @import methods
 #' @export
 #' 
 
@@ -35,7 +41,7 @@ ds.cutree <- function(tree, k = NULL, h = NULL, newobj = NULL, datasources = NUL
   }
   
   # Needs check if df.name exists everywhere and that the columns in df.name have the same name in all studies
-  defined <- isDefined(datasources, tree)
+  defined <- dsBaseClient::isDefined(datasources, tree)
   
   
   # if the input object is not defined in all studies then return an error message
@@ -45,7 +51,7 @@ ds.cutree <- function(tree, k = NULL, h = NULL, newobj = NULL, datasources = NUL
   
   
   # call the internal function that checks the input object is of the same class in all studies.
-  typ <- checkClass(datasources, tree)
+  typ <- dsBaseClient::checkClass(datasources, tree)
 
   
   # Check whether the input is either of type data frame or matrix
@@ -66,7 +72,7 @@ ds.cutree <- function(tree, k = NULL, h = NULL, newobj = NULL, datasources = NUL
   DSI::datashield.assign(datasources, newobj, cally)
   
   # check that the new object has been created and display a message accordingly
-  finalcheck <- isAssigned(datasources, newobj)
+  finalcheck <- dsBaseClient::isAssigned(datasources, newobj)
   
   
 }

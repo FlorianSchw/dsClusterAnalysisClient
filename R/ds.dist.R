@@ -4,10 +4,15 @@
 #' @details The function calls the server-side function \code{distDS} that computes the
 #' distance matrix of a data set (type data.frame or matrix) and assigns the new object to the server-side, which will be of class 'dist'.
 #' The new object is named by the user using the \code{newobj} argument, otherwise it is named \code{dist.newobj} by default.
-#' @param df.name is a string character of the data set (either a data.frame or a matrix). The \code{method} argument specifies the method
-#' for the distance matrix calculation and can be either 'euclidean', 'maximum', 'manhattan', 'canberra', 'binary' or 'minkowski'.
+#' @param df.name is a string character of the data set (either a data.frame or a matrix)
+#' @param method specifies the method for the distance matrix calculation and can be either 'euclidean', 'maximum', 'manhattan', 'canberra', 'binary' or 'minkowski'
+#' @param newobj is the name of the new object which is created with this function
+#' @param datasources a list of \code{\link{DSConnection-class}} objects obtained after login
 #' @return the object specified by the \code{newobj} argument of \code{ds.dist} or default name \code{dist.newobj}
 #' @author Florian Schwarz for the German Institute of Human Nutrition
+#' @import DSI
+#' @import dsBaseClient
+#' @import methods
 #' @export
 #' 
 

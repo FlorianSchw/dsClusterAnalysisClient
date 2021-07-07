@@ -5,10 +5,18 @@
 #' k-means clustering of a data set (type 'data.frame' or 'matrix'). 
 #' The function creates a new object on the server-side, which is of class 'kmeans'.
 #' The new object is named by the user using the \code{newobj} argument, otherwise it is named \code{kmeans.newobj} by default.
-#' @param df.name is a string character of the data set.  The \code{clusters} argument specifies the number of clusters
-#' for the computation of the clustering.
+#' @param df.name is a string character of the data set
+#' @param clusters specifies the number of clusters for the computation 
+#' @param iter.max specifies the max. number of iterations allowed
+#' @param nstart relates to the number of random sets if clusters is a number and not a set of initial cluster centers
+#' @param algorithm refers to the algorithm of calculating the kmeans and can be either 'Hartigan-Wong', 'Lloyd', 'Forgy' or 'MacQueen' 
+#' @param newobj is the name of the new object which is created with this function
+#' @param datasources a list of \code{\link{DSConnection-class}} objects obtained after login
 #' @return the object specified by the \code{newobj} argument of \code{ds.kmeans} or default name \code{kmeans.newobj}
 #' @author Florian Schwarz for the German Institute of Human Nutrition
+#' @import DSI
+#' @import dsBaseClient
+#' @import methods
 #' @export
 #' 
 

@@ -5,10 +5,16 @@
 #' hierarchical clustering of a dissimilarity structure (type 'dist'). The dissimilarity structure can be computed via the ds.dist function.
 #' The function creates a new object on the server-side, which is of class 'hclust'.
 #' The new object is named by the user using the \code{newobj} argument, otherwise it is named \code{hclust.newobj} by default.
-#' @param diss is a string character of the dissimilarity structure. The \code{method} argument specifies the method
-#' for the calculation of the hierarchical clustering and can be either 'ward.D', 'ward.D2', 'single', 'complete', 'average', 'mcquitty', 'median' or 'centroid'.
+#' @param diss is a string character of the dissimilarity structure
+#' @param method specifies the method for the calculation of the hierarchical clustering and can be either 'ward.D', 'ward.D2', 'single', 
+#' 'complete', 'average', 'mcquitty', 'median' or 'centroid'
+#' @param newobj is the name of the new object which is created with this function
+#' @param datasources a list of \code{\link{DSConnection-class}} objects obtained after login
 #' @return the object specified by the \code{newobj} argument of \code{ds.hclust} or default name \code{hclust.newobj}
 #' @author Florian Schwarz for the German Institute of Human Nutrition
+#' @import DSI
+#' @import dsBaseClient
+#' @import methods
 #' @export
 #' 
 
