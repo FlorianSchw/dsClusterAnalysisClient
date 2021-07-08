@@ -37,18 +37,8 @@ ds.hclust <- function(diss = NULL, method = "ward.D2", newobj = NULL, datasource
   }
   
   
-  # Needs check if dissimilarity structure exists everywhere
-  defined <- isDefined(datasources, diss)
-  
-  
-  # if the input object is not defined in all studies then return an error message
-  if(defined == FALSE){
-    stop("The dissimilarity structure diss is not defined in all studies!", call.=FALSE)
-  }
-  
-  
   # call the internal function that checks the input object is of the same class in all studies.
-  typ <- checkClass(datasources, diss)
+  typ <- dsBaseClient::ds.class(diss, datasources)
   
   
   # Check whether the input is of type 'dist'
@@ -74,9 +64,7 @@ ds.hclust <- function(diss = NULL, method = "ward.D2", newobj = NULL, datasource
   # call the server side function that does the operation
   cally <- call("hclustDS", diss, method)
   DSI::datashield.assign(datasources, newobj, cally)
-  
-  # check that the new object has been created and display a message accordingly
-  finalcheck <- isAssigned(datasources, newobj)
+
   
 }
 

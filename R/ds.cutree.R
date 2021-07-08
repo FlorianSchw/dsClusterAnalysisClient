@@ -40,18 +40,9 @@ ds.cutree <- function(tree, k = NULL, h = NULL, newobj = NULL, datasources = NUL
     stop("Please provide a number for k or h for cutting the tree.", call.=FALSE)
   }
   
-  # Needs check if df.name exists everywhere and that the columns in df.name have the same name in all studies
-  defined <- dsBaseClient::isDefined(datasources, tree)
-  
-  
-  # if the input object is not defined in all studies then return an error message
-  if(defined == FALSE){
-    stop("The dataframe is not defined in all the studies!", call.=FALSE)
-  }
-  
   
   # call the internal function that checks the input object is of the same class in all studies.
-  typ <- dsBaseClient::checkClass(datasources, tree)
+  typ <- dsBaseClient::ds.class(tree, datasources)
 
   
   # Check whether the input is either of type data frame or matrix
@@ -71,10 +62,7 @@ ds.cutree <- function(tree, k = NULL, h = NULL, newobj = NULL, datasources = NUL
   cally <- call("cutreeDS", tree, k, h)
   DSI::datashield.assign(datasources, newobj, cally)
   
-  # check that the new object has been created and display a message accordingly
-  finalcheck <- dsBaseClient::isAssigned(datasources, newobj)
-  
-  
+ 
 }
 
 

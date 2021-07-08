@@ -35,18 +35,8 @@ ds.dist <- function(df.name=NULL, method = "euclidean", newobj=NULL, datasources
   }
   
   
-  # Needs check if df.name exists everywhere and that the columns in df.name have the same name in all studies
-  defined <- isDefined(datasources, df.name)
-  
-  
-  # if the input object is not defined in all studies then return an error message
-  if(defined == FALSE){
-    stop("The dataframe is not defined in all the studies!", call.=FALSE)
-  }
-  
-  
   # call the internal function that checks the input object is of the same class in all studies.
-  typ <- checkClass(datasources, df.name)
+  typ <- dsBaseClient::ds.class(df.name, datasources)
   
   # Check whether the input is either of type data frame or matrix
   if(!('data.frame' %in% typ) && !('matrix' %in% typ)){
@@ -106,9 +96,7 @@ ds.dist <- function(df.name=NULL, method = "euclidean", newobj=NULL, datasources
   # call the server side function that does the operation
   cally <- call("distDS", df.name, method)
   DSI::datashield.assign(datasources, newobj, cally)
-  
-  # check that the new object has been created and display a message accordingly
-  finalcheck <- isAssigned(datasources, newobj)
+
   
 }
 

@@ -43,26 +43,16 @@ ds.kmeans <- function(df.name = NULL, clusters = NULL, iter.max = 10, nstart = 1
   }
   
   # call the internal function that checks the input object is of the same class in all studies.
-  typ2 <- checkClass(datasources, clusters)
+  typ2 <- dsBaseClient::ds.class(clusters, datasources)
   
   # Check whether the input for clusters is of type 'numerical' or 'integer'
   if(!('numerical' %in% typ2) && !('integer' %in% typ2)){
     stop("The number of clusters has to be given as a 'numerical' or 'integer' value.", call.=FALSE)
   }
   
-  
-  # Needs check if data set exists everywhere
-  defined <- isDefined(datasources, df.name)
-  
-  
-  # if the input object is not defined in all studies then return an error message
-  if(defined == FALSE){
-    stop("The data set is not defined in all studies!", call.=FALSE)
-  }
-  
-  
+
   # call the internal function that checks the input object is of the same class in all studies.
-  typ <- checkClass(datasources, df.name)
+  typ <- dsBaseClient::ds.class(df.name, datasources)
   
   # Check whether the input is of type 'data.frame' or 'matrix'
   if(!('data.frame' %in% typ) && !('matrix' %in% typ)){
@@ -88,8 +78,7 @@ ds.kmeans <- function(df.name = NULL, clusters = NULL, iter.max = 10, nstart = 1
   cally <- call("kmeansDS", df.name, clusters, iter.max, nstart, algorithm)
   DSI::datashield.assign(datasources, newobj, cally)
   
-  # check that the new object has been created and display a message accordingly
-  finalcheck <- isAssigned(datasources, newobj)
+
   
 }
 
