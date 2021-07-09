@@ -21,7 +21,7 @@
 #' 
 
 
-ds.kmeans <- function(df.name = NULL, clusters = NULL, iter.max = 10, nstart = 1, algorithm = "Hartigan-Wong", newobj = NULL, datasources = NULL){
+ds.kmeans <- function(df.name = NULL, clusters = 4, iter.max = 10, nstart = 1, algorithm = "Hartigan-Wong", newobj = NULL, datasources = NULL){
   
   # look for DS connections
   if(is.null(datasources)){
