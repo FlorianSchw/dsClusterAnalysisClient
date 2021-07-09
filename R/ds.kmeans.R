@@ -21,7 +21,7 @@
 #' 
 
 
-ds.kmeans <- function(df.name = NULL, clusters = 4, iter.max = 10, nstart = 1, algorithm = "Hartigan-Wong", newobj = NULL, datasources = NULL){
+ds.kmeans <- function(df.name = NULL, clusters = NULL, iter.max = 10L, nstart = 1L, algorithm = "Hartigan-Wong", trace = FALSE, newobj = NULL, datasources = NULL){
   
   # look for DS connections
   if(is.null(datasources)){
@@ -44,12 +44,12 @@ ds.kmeans <- function(df.name = NULL, clusters = 4, iter.max = 10, nstart = 1, a
   
 
   # call the internal function that checks the input object is of the same class in all studies.
-  typ <- dsBaseClient::ds.class(df.name, datasources)
+  #typ <- dsBaseClient::ds.class(df.name, datasources)
   
   # Check whether the input is of type 'data.frame' or 'matrix'
-  if(!('data.frame' %in% typ) && !('matrix' %in% typ)){
-    stop("Only objects of type 'data.frame' or 'matrix' are allowed for the  k-means clustering.", call.=FALSE)
-  }
+ # if(!('data.frame' %in% typ) && !('matrix' %in% typ)){
+  #  stop("Only objects of type 'data.frame' or 'matrix' are allowed for the  k-means clustering.", call.=FALSE)
+ # }
   
   
   # create a name by default if the user does not provide a name for the new variable
