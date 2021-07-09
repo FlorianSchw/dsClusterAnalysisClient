@@ -18,10 +18,10 @@
 #' @import dsBaseClient
 #' @import methods
 #' @export
-#' 
+#' iter.max = 10L, nstart = 1L, algorithm = "Hartigan-Wong", trace = FALSE,
 
 
-ds.kmeans <- function(df.name = NULL, clusters = NULL, iter.max = 10L, nstart = 1L, algorithm = "Hartigan-Wong", trace = FALSE, newobj = NULL, datasources = NULL){
+ds.kmeans <- function(df.name = NULL, clusters = NULL,  newobj = NULL, datasources = NULL){
   
   # look for DS connections
   if(is.null(datasources)){
@@ -61,13 +61,13 @@ ds.kmeans <- function(df.name = NULL, clusters = NULL, iter.max = 10L, nstart = 
   # Needs to be checked for one of the six methods in a list
   allowedmethods <- c("Hartigan-Wong", "Lloyd", "Forgy", "MacQueen")
   
-  if(!(algorithm %in% allowedmethods)){
-    stop("The algorithm needs to be one of the following: 'Hartigan-Wong', 'Lloyd', 'Forgy' or 'MacQueen'.", call.=FALSE)
-  }
+  #if(!(algorithm %in% allowedmethods)){
+ #   stop("The algorithm needs to be one of the following: 'Hartigan-Wong', 'Lloyd', 'Forgy' or 'MacQueen'.", call.=FALSE)
+ # }
   
   
   # call the server side function that does the operation
-  cally <- call("kmeansDS", df.name, clusters, iter.max, nstart, algorithm)
+  cally <- call("kmeansDS", df.name, clusters)
   DSI::datashield.assign(datasources, newobj, cally)
   
 
