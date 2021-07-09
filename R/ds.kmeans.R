@@ -42,14 +42,6 @@ ds.kmeans <- function(df.name = NULL, clusters = 4, iter.max = 10, nstart = 1, a
     stop("Please provide the number of clusters to be computed!", call.=FALSE)
   }
   
-  # call the internal function that checks the input object is of the same class in all studies.
-  typ2 <- dsBaseClient::ds.class(clusters, datasources)
-  
-  # Check whether the input for clusters is of type 'numerical' or 'integer'
-  if(!('numerical' %in% typ2) && !('integer' %in% typ2)){
-    stop("The number of clusters has to be given as a 'numerical' or 'integer' value.", call.=FALSE)
-  }
-  
 
   # call the internal function that checks the input object is of the same class in all studies.
   typ <- dsBaseClient::ds.class(df.name, datasources)
