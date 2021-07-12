@@ -53,9 +53,9 @@ ds.clusterPlot <- function(df.name=NULL, k = NULL, h = NULL, k_colors = NULL, co
   
   
   # create a name by default if the user does not provide a name for the new variable
-  if(is.null(newobj)){
-    newobj <- "dist.newobj"
-  }
+ # if(is.null(newobj)){
+   # newobj <- "dist.newobj"
+  #}
   
   
   # call the server side function that does the operation
