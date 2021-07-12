@@ -25,7 +25,7 @@
 #' 
 
 
-ds.clusterPlot <- function(df.name=NULL, k = NULL, h = NULL, k_colors = NULL, color_labels_by_k = FALSE, main = "Cluster Dendrogram", xlab = "Samples", ylab = "Height",  datasources=NULL){
+ds.clusterPlot <- function(df.name=NULL, k = NULL, h = NULL, k_colors = NULL, color_labels_by_k = FALSE, rect = FALSE, main = "Cluster Dendrogram", xlab = "Samples", ylab = "Height",  datasources=NULL){
   
   # look for DS connections
   if(is.null(datasources)){
@@ -59,7 +59,7 @@ ds.clusterPlot <- function(df.name=NULL, k = NULL, h = NULL, k_colors = NULL, co
   
   
   # call the server side function that does the operation
-  cally <- call("clusterPlotDS", df.name, k, h, k_colors, color_labels_by_k, main, xlab, ylab)
+  cally <- call("clusterPlotDS", df.name, k, h, k_colors, color_labels_by_k, rect, main, xlab, ylab)
   output <- DSI::datashield.aggregate(datasources, cally)
   
   return(output)
