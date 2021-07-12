@@ -1,22 +1,21 @@
-############### Plotting function for kmeans and hclust
-
-
-
-
 #'
 #' @title Draws a basic plot for clustering methods
-#' @description This function produces a plot for kmeans or hclust clustering data
+#' @description This function produces a plot for hclust clustering data
 #' @details The function calls the server-side function \code{kmeansDS} that computes the
 #' k-means clustering of a data set (type 'data.frame' or 'matrix'). 
 #' The function creates a new object on the server-side, which is of class 'kmeans'.
 #' The new object is named by the user using the \code{newobj} argument, otherwise it is named \code{kmeans.newobj} by default.
+#' @details The function computes the dendrogram without any labels to prevent any disclosures.
+#' The new object is named by the user using the \code{newobj} argument, otherwise it is named \code{kmeans.newobj} by default.
 #' @param df.name is a string character of the data set
-#' @param clusters specifies the number of clusters for the computation 
-#' @param iter.max specifies the max. number of iterations allowed
-#' @param nstart relates to the number of random sets if clusters is a number and not a set of initial cluster centers
-#' @param algorithm refers to the algorithm of calculating the kmeans and can be either 'Hartigan-Wong', 'Lloyd', 'Forgy' or 'MacQueen' 
-#' @param newobj is the name of the new object which is created with this function
-#' @param datasources a list of \code{\link{DSConnection-class}} objects obtained after login
+#' @param k specifies the number of clusters in which the tree should be cut 
+#' @param h specifies the height of a tree at which the tree should be cut
+#' @param k_colors is a vector containing colors to be used for groups
+#' @param color_labels_by_k is a logical value which colors the branches by group when k is not NULL
+#' @param rect is a logical value which specifies whether to add a rectangle around groups when k is not NULL
+#' @param main is the main title of the plot 
+#' @param xlab is a title for the x axis 
+#' @param ylab is a title for the y axis 
 #' @return the object specified by the \code{newobj} argument of \code{ds.kmeans} or default name \code{kmeans.newobj}
 #' @author Florian Schwarz for the German Institute of Human Nutrition
 #' @import DSI
@@ -24,10 +23,6 @@
 #' @import methods
 #' @export
 #' 
-
-
-
-
 
 
 ds.clusterPlot <- function(df.name=NULL, k = NULL, h = NULL, k_colors = NULL, color_labels_by_k = FALSE, main = "Cluster Dendrogram", xlab = "Samples", ylab = "Height", newobj=NULL, datasources=NULL){
