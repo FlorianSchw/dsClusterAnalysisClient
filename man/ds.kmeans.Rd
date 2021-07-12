@@ -7,9 +7,10 @@
 ds.kmeans(
   df.name = NULL,
   clusters = NULL,
-  iter.max = 10,
-  nstart = 1,
+  iter.max = 10L,
+  nstart = 1L,
   algorithm = "Hartigan-Wong",
+  trace = FALSE,
   newobj = NULL,
   datasources = NULL
 )
