@@ -9,10 +9,9 @@ ds.clusterPlot(
   k = NULL,
   h = NULL,
   k_colors = NULL,
+  palette = NULL,
+  show_labels = TRUE,
   color_labels_by_k = FALSE,
-  main = "Cluster Dendrogram",
-  xlab = "Samples",
-  ylab = "Height",
   datasources = NULL
 )
 }
@@ -27,13 +26,13 @@ ds.clusterPlot(
 
 \item{color_labels_by_k}{is a logical value which colors the branches by group when k is not NULL}
 
+\item{rect}{is a logical value which specifies whether to add a rectangle around groups when k is not NULL}
+
 \item{main}{is the main title of the plot}
 
 \item{xlab}{is a title for the x axis}
 
 \item{ylab}{is a title for the y axis}
-
-\item{rect}{is a logical value which specifies whether to add a rectangle around groups when k is not NULL}
 }
 \value{
 the object specified by the \code{newobj} argument of \code{ds.kmeans} or default name \code{kmeans.newobj}
