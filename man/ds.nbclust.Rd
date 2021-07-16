@@ -6,47 +6,38 @@
 \usage{
 ds.nbclust(
   df.name = NULL,
-  FUNcluster = c("kmeans", "hcut", "cluster::pam", "cluster::fanny", "cluster::clara"),
-  method = c("silhouette", "wss", "gap_stat"),
   diss = NULL,
-  k.max = 10,
-  nboot = 100,
-  verbose = interactive(),
-  barfill = "steelblue",
-  barcolor = "steelblue",
-  linecolor = "steelblue",
-  print.summary = TRUE,
+  distance = "euclidean",
+  min.nc = 2,
+  max.nc = 15,
+  method = NULL,
+  index = "all",
+  alphaBeale = 0.1,
   datasources = NULL
 )
 }
 \arguments{
 \item{df.name}{is a string character of the data set and can be either a matrix or data frame}
 
-\item{FUNcluster}{is a partitioning function}
+\item{diss}{is a dissimilarity structure which will be calculated according to the distance method}
 
-\item{method}{the method to be used for estimating the optimal number of clusters. Possible values are "silhouette", "wss" and "gap_stat".}
+\item{distance}{specifies the method for the distance matrix calculation and can be either 'euclidean', 'maximum', 'manhattan', 'canberra', 'binary' or 'minkowski'}
 
-\item{diss}{'dist' object as produced by ds.dist. If diss = NULL, dist(df.name) is computed with the default "euclidean" setting.}
+\item{min.nc}{specifies the minimum number of clusters}
 
-\item{k.max}{maximum number of clusters to be considered (has to be at least 2)}
+\item{max.nc}{specifies the maximum number of clusters}
 
-\item{nboot}{number of Monte Carlo bootstrap samples. This argument is only used for determining the number of clusters for gap statistics}
+\item{method}{describes the clustering method and can be either "ward.D2", "single", "complete", "average", "mcquitty", "median", "centroid", "kmeans" or "ward.D"}
 
-\item{verbose}{logical values, If TRUE, the result of progress is printed.}
+\item{index}{describes the clustering index and can be either "kl", "ch", "hartigan", "ccc", "scott", "marriot", "trcovw", "tracew", "friedman", "rubin", "cindex", "db", "silhouette", "duda", "pseudot2", "beale", "ratkowsky", "ball", "ptbiserial", "gap", "frey", "mcclain", "gamma", "gplus", "tau", "dunn", "hubert", "sdindex", "dindex", "sdbw", "all" or "alllong"}
 
-\item{barfill}{fill color for bars}
-
-\item{barcolor}{outline color for bars}
-
-\item{linecolor}{color for lines}
-
-\item{print.summary}{logical value. If TRUE, the optimal number of clusters are printed}
+\item{alphaBeale}{value for "beale" clustering index}
 }
 \value{
-a ggplot2 image suggesting optimal number of clusters
+a summary suggesting the optimal number of clusters
 }
 \description{
-This function is similar to the R function 'fviz_nbclust' from the factoextra package
+This function is similar to the R function 'NBClust' from the NBClust package
 }
 \details{
 The function uses partitioning methods to find optimal numbers of clusters for a given dataset.

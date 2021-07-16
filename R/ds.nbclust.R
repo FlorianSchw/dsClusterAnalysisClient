@@ -1,6 +1,3 @@
-######### client side function of the NBClust function from the package of the same name 
-
-
 #'
 #' @title Determines optimal number of clusters for dataset
 #' @description This function is similar to the R function 'NBClust' from the NBClust package
