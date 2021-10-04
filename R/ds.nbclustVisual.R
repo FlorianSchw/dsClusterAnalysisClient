@@ -13,15 +13,15 @@
 #' @param barcolor outline color for bars 
 #' @param linecolor color for lines 
 #' @param print.summary logical value. If TRUE, the optimal number of clusters are printed 
+#' @param datasources is a DSConnection object
 #' @return a ggplot2 image suggesting optimal number of clusters
 #' @author Florian Schwarz for the German Institute of Human Nutrition
-#' @importFrom factoextra fviz_nbclust
 #' @export
 #' 
 
 
 
-ds.nbclustVisual <- function(df.name=NULL, FUNcluster = c("kmeans", "hcut", "cluster::pam", "cluster::fanny", "cluster::clara"), method = c("silhouette", "wss", "gap_stat"), diss = NULL, k.max = 10, nboot = 100, verbose = interactive(), barfill = "steelblue", barcolor = "steelblue", linecolor = "steelblue", print.summary = TRUE, datasources=NULL){
+ds.nbclustVisual <- function(df.name = NULL, FUNcluster = NULL, method = NULL, diss = NULL, k.max = 10, nboot = 100, verbose = interactive(), barfill = "steelblue", barcolor = "steelblue", linecolor = "steelblue", print.summary = TRUE, datasources=NULL){
 
   
   
@@ -36,8 +36,35 @@ ds.nbclustVisual <- function(df.name=NULL, FUNcluster = c("kmeans", "hcut", "clu
     stop("The 'datasources' were expected to be a list of DSConnection-class objects", call.=FALSE)
   }
   
+  
   if(is.null(df.name)){
     stop("Please provide the name of the input object!", call.=FALSE)
+  }
+  
+  
+  if(is.null(FUNcluster)){
+    stop("Please provide the clustering function in the 'FUNcluster' argument.", call.=FALSE)
+  }
+  
+  
+  # Allowed clustering functions
+  clusterfunctions <- c("kmeans", "hcut", "cluster::pam", "cluster::clara", "cluster::fanny")
+  
+  if(!(FUNcluster %in% clusterfunctions)){
+    stop("The clustering function needs to be one of the following: 'kmeans', 'hcut', 'cluster::pam', 'cluster::clara' or 'cluster::fanny'.", call.=FALSE)
+  }
+  
+  
+  if(is.null(method)){
+    stop("Please provide the method for estimating the optimal number of clusters in the 'method' argument.", call.=FALSE)
+  }
+  
+  
+  # Allowed methods
+  allowedmethods <- c("silhouette", "wss", "gap_stat")
+  
+  if(!(method %in% allowedmethods)){
+    stop("The method for estimating the optimal number of clusters needs to be one of the following: 'silhouette', 'wss' or 'gap_stat'.", call.=FALSE)
   }
   
   
@@ -47,6 +74,56 @@ ds.nbclustVisual <- function(df.name=NULL, FUNcluster = c("kmeans", "hcut", "clu
   # Check whether the input is either of type data frame or matrix
   if(!('matrix' %in% typ) && !('data.frame' %in% typ)){
     stop("Only objects of type 'matrix' or 'data.frame' are allowed.", call.=FALSE)
+  }
+  
+  
+  
+  # Check whether the input object diss is of type 'dist'
+  if(!(is.null(diss))){
+      
+     typ2 <- dsBaseClient::ds.class(diss, datasources)
+  
+     if(!('dist' %in% typ2)){
+       stop("The 'diss' argument is not of type 'dist'.", call.=FALSE)
+     }
+     
+  }
+  
+
+  
+  
+  # Check whether all columns in the data frame exist in every source
+  
+  column.names <- list()
+  for (i in 1:length(datasources)){
+    column.names[[i]] <- dsBaseClient::ds.colnames(df.name, datasources=datasources[i])[[1]]
+  }
+  
+  allNames <- unique(unlist(column.names))
+  
+  # if the data sets do not share the same columns then the function stops
+  check.indicator <- c()
+  for (i in 1:length(datasources)){
+    if(length(setdiff(allNames,column.names[[i]])) > 0){
+      check.indicator[i] <- 1
+    }else{
+      check.indicator[i] <- 0}
+  }
+  
+  if(!(sum(check.indicator)==0)){
+    stop("The data frames do not have the same columns. There are columns missing in some data frames!", call.=FALSE)
+  }
+  
+  
+  class.list <- lapply(allNames, function(x){dsBaseClient::ds.class(paste0(df.name, '$', x), datasources=datasources)})
+  class.vect1 <- lapply(class.list, function(x){unlist(x)})
+  class.vect2 <- lapply(class.vect1, function(x){x[which(x != 'NULL')[[1]]]})
+  class.vect2 <- unname(unlist(class.vect2))
+  
+  
+  # Check whether the columns in the data set are either of type numeric or integer
+  if(!('numeric' %in% class.vect2) && !('integer' %in% class.vect2)){
+    stop("The data frames contain columns which are not of type 'numeric' or 'integer'.", call.=FALSE)
   }
   
   

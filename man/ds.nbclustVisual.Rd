@@ -6,8 +6,8 @@
 \usage{
 ds.nbclustVisual(
   df.name = NULL,
-  FUNcluster = c("kmeans", "hcut", "cluster::pam", "cluster::fanny", "cluster::clara"),
-  method = c("silhouette", "wss", "gap_stat"),
+  FUNcluster = NULL,
+  method = NULL,
   diss = NULL,
   k.max = 10,
   nboot = 100,
@@ -41,6 +41,8 @@ ds.nbclustVisual(
 \item{linecolor}{color for lines}
 
 \item{print.summary}{logical value. If TRUE, the optimal number of clusters are printed}
+
+\item{datasources}{is a DSConnection object}
 }
 \value{
 a ggplot2 image suggesting optimal number of clusters

@@ -4,7 +4,7 @@
 \alias{ds.cutree}
 \title{Cuts the tree of a hclust object}
 \usage{
-ds.cutree(tree, k = NULL, h = NULL, newobj = NULL, datasources = NULL)
+ds.cutree(tree = NULL, k = NULL, h = NULL, newobj = NULL, datasources = NULL)
 }
 \arguments{
 \item{tree}{is a string character specifying the name of the hclust object}

@@ -11,6 +11,7 @@ ds.kmeans(
   nstart = 1L,
   algorithm = "Hartigan-Wong",
   trace = FALSE,
+  seed = 123,
   newobj = NULL,
   datasources = NULL
 )
@@ -25,6 +26,10 @@ ds.kmeans(
 \item{nstart}{relates to the number of random sets if clusters is a number and not a set of initial cluster centers}
 
 \item{algorithm}{refers to the algorithm of calculating the kmeans and can be either 'Hartigan-Wong', 'Lloyd', 'Forgy' or 'MacQueen'}
+
+\item{trace}{is a logical or integer specifying whether tracing information on the progress of the algorithm is procuded for the Hartigan-Wong algorithm}
+
+\item{seed}{is an integer for setting the seed}
 
 \item{newobj}{is the name of the new object which is created with this function}
 

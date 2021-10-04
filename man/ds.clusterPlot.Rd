@@ -5,7 +5,7 @@
 \title{Draws a basic plot for clustering methods}
 \usage{
 ds.clusterPlot(
-  df.name = NULL,
+  tree = NULL,
   k = NULL,
   h = NULL,
   k_colors = NULL,
@@ -16,7 +16,7 @@ ds.clusterPlot(
 )
 }
 \arguments{
-\item{df.name}{is a string character of the data set}
+\item{tree}{is a string character of the data set}
 
 \item{k}{specifies the number of clusters in which the tree should be cut}
 
@@ -24,15 +24,13 @@ ds.clusterPlot(
 
 \item{k_colors}{is a vector containing colors to be used for groups}
 
+\item{palette}{a vector containing colors to be used for groups}
+
+\item{show_labels}{will always be set to false on the server-side for disclosure reasons}
+
 \item{color_labels_by_k}{is a logical value which colors the branches by group when k is not NULL}
 
-\item{rect}{is a logical value which specifies whether to add a rectangle around groups when k is not NULL}
-
-\item{main}{is the main title of the plot}
-
-\item{xlab}{is a title for the x axis}
-
-\item{ylab}{is a title for the y axis}
+\item{datasources}{DSCOnnections}
 }
 \value{
 the object specified by the \code{newobj} argument of \code{ds.kmeans} or default name \code{kmeans.newobj}

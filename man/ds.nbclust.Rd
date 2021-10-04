@@ -13,6 +13,7 @@ ds.nbclust(
   method = NULL,
   index = "all",
   alphaBeale = 0.1,
+  seed = 123,
   datasources = NULL
 )
 }
@@ -32,6 +33,10 @@ ds.nbclust(
 \item{index}{describes the clustering index and can be either "kl", "ch", "hartigan", "ccc", "scott", "marriot", "trcovw", "tracew", "friedman", "rubin", "cindex", "db", "silhouette", "duda", "pseudot2", "beale", "ratkowsky", "ball", "ptbiserial", "gap", "frey", "mcclain", "gamma", "gplus", "tau", "dunn", "hubert", "sdindex", "dindex", "sdbw", "all" or "alllong"}
 
 \item{alphaBeale}{value for "beale" clustering index}
+
+\item{seed}{is an integer for random start point}
+
+\item{datasources}{is a DSConnection object}
 }
 \value{
 a summary suggesting the optimal number of clusters

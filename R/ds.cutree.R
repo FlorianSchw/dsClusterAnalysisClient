@@ -18,7 +18,7 @@
 #' 
 
 
-ds.cutree <- function(tree, k = NULL, h = NULL, newobj = NULL, datasources = NULL){
+ds.cutree <- function(tree = NULL, k = NULL, h = NULL, newobj = NULL, datasources = NULL){
   
   # look for DS connections
   if(is.null(datasources)){
