@@ -1,5 +1,11 @@
 ---
 title: "dsClusterAnalysisClient"
+author: 
+- name: Florian Schwarz
+  affiliation: 
+  - &isglobal German Institute of Human Nutrition Potsdam-Rehbruecke
+  email: Florian.Schwarz@dife.de
+date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{dsClusterAnalysisClient}
@@ -14,45 +20,54 @@ knitr::opts_chunk$set(
 )
 ```
 
-## About DataSHIELD
+## Introduction
 
-DataSHIELD is a software package for non-disclosive federated data analysis using a client - server function architecture. For further information, visit https://www.datashield.ac.uk. The most comprehensive packages - dsBaseClient and dsBase - can be found at https://github.com/datashield/dsBase and https://github.com/datashield/dsBaseClient, respectively.
-The dsClusterAnalysisClient package together with the dsClusterAnalysis package (https://github.com/FlorianSchw/dsClusterAnalysis) provide additional functionality for DataSHIELD.
+In order to use this vignette, you need a Virtual Machine running imitating the server side of a real-world Opal connection. In order to do this, follow the instructions displayed here: https://data2knowledge.atlassian.net/wiki/spaces/DSDEV/pages/1657602074/Virtual+Machines+Guides.
+
+Note: This section needs to be expanded with detailed information!!!
+
+192.168.56.150:8080 instead of the 192.168.56.100:8080 further information required
 
 
-## Installation
+## Installation of devtools and dsClusterAnalysisClient
 
+```{r install_dsClusterAnalysis, eval = FALSE}
 install.packages("devtools")
-
 library(devtools)
-
 devtools::install_github("FlorianSchw/dsClusterAnalysisClient")
 
+
+```
+
+## Loading of all relevant Libraries
+
+
+```{r cache = FALSE}
+library(dsBaseClient)
 library(dsClusterAnalysisClient)
-
-
-
-```{r}
-
-
-
+library(DSOpal)
 ```
 
-## Acknowledgements
+## Bulding a connection to the Virtual Machine
 
-I am thankful for the help and support of the DataSHIELD Developer Team.
-
-
-## Contact
-
-Florian.Schwarz@dife.de
-
-
-
-
-
-
-```{r setup}
-
-
+```{r child='functions/initialize_connection.Rmd', include=TRUE}
 ```
+
+
+## Creating the cluster Plot from the dataset
+
+
+```{r child='functions/clusterPlot.Rmd', include=TRUE}
+```
+
+
+
+
+
+
+
+
+
+
+
+

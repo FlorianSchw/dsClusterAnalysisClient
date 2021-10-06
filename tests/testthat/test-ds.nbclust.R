@@ -26,9 +26,10 @@ test_that("ds.nbclust errors", {
   ds.dataFrame(x = c("num.obj1", "num.obj2", "num.obj3"), newobj = "test_df5", datasources = ds.test_env$connections)
   
   
-    ds.dist("test_df1", newobj = "diss.obj")
+  ds.dist("test_df1", newobj = "diss.obj")
   
-  res1 <- ds.nbclust(df.name = "test_df5", method = "kmeans")
+  ds.completeCases("test_df5", newobj = "test_df6", datasources = ds.test_env$connections)
+  res1 <- ds.nbclust(df.name = "test_df6", method = "kmeans")
   
   # Actual Test Start
   

@@ -1,0 +1,18 @@
+
+
+
+
+## Creating a Cluster Plot 
+
+In this part, you will learn, how to produce a DataSHIELD compatible cluster dendrogram.
+
+
+
+```{r}
+ds.completeCases("D", newobj = "D_clean")
+ds.dist("D_clean")
+ds.hclust("dist.newobj")
+ds.clusterPlot(tree = "hclust.newobj")
+```
+
+
