@@ -11,7 +11,7 @@ The dsClusterAnalysisClient package together with the dsClusterAnalysis package 
 ## Introduction
 
 
-# Installation
+### Installation
 
 install.packages("devtools")
 
@@ -22,7 +22,7 @@ devtools::install_github("FlorianSchw/dsClusterAnalysisClient")
 library(dsClusterAnalysisClient)
 
 
-# Setting up a Virtual Machine to simulate the server side
+### Setting up a Virtual Machine to simulate the server side
 
 In order to use this packages DataSHIELD functionality, the complementary server-side package dsClusterAnalysis needs to be installed on a server together with Opal. For simple development/testing purposes, setting up a Virtual Machine with an Opal/DataSHIELD Image is sufficient in imitating the server side of a real-world application. First of all, you need to download and install VirtualBox following the instructions here: https://data2knowledge.atlassian.net/wiki/spaces/DSDEV/pages/1146454017/v6.1+Windows+Installation+Instructions. 
 
@@ -48,7 +48,7 @@ opal.logout(o)
 
 Note, that following the installation of the packages, you need to publish the methods of the dsClusterAnalysis package under the Administration -> DataSHIELD -> Packages tab.
 
-# Vignette
+### Vignette
 
 In case you want to have a look at the vignette of this package, the above specified VM Image will be able to build the vignette when downloading and installing the package. For this, the VM Image needs to be already running prior to installation of the client side package. To install the dsClusterAnalysisClient package with the vignette, you need to adjust the install function. Please be adviced that installing the package including the vignette can take considerably more time.
 
