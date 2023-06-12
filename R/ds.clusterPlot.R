@@ -42,13 +42,17 @@ ds.clusterPlot <- function(tree=NULL, k = NULL, h = NULL, k_colors = NULL, palet
   }
   
   
+  defined <- dsBaseClient:::isDefined(datasources, tree)
+  
+  
+  
   if(!(is.null(k)) && !(is.null(h))){
     stop("Please specify only one of 'k' or 'h'.", call.=FALSE)
   }
   
   
   # call the internal function that checks the input object is of the same class in all studies.
-  typ <- dsBaseClient::ds.class(tree, datasources)
+  typ <- dsBaseClient:::checkClass(datasources, tree)
   
   # Check whether the input is either of type data frame or matrix
   if(!('hclust' %in% typ)){
@@ -56,12 +60,7 @@ ds.clusterPlot <- function(tree=NULL, k = NULL, h = NULL, k_colors = NULL, palet
   }
   
   
-  # create a name by default if the user does not provide a name for the new variable
- # if(is.null(newobj)){
-   # newobj <- "dist.newobj"
-  #}k, h, k_colors, color_labels_by_k, rect, main, xlab, ylab
-  
-  
+
   # call the server side function that does the operation
   cally <- call("clusterPlotDS", tree, k, h, k_colors, palette, show_labels, color_labels_by_k)
   outcome <- DSI::datashield.aggregate(datasources, cally)

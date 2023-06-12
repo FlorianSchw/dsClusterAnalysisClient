@@ -40,53 +40,25 @@ ds.kmeans <- function(df.name = NULL, clusters = NULL, iter.max = 10L, nstart = 
     stop("Please provide the name of the input object!", call.=FALSE)
   }
   
+  
+  defined <- dsBaseClient:::isDefined(datasources, df.name)
+  
+  
   if(is.null(clusters)){
     stop("Please provide the number of clusters to be computed!", call.=FALSE)
   }
   
 
   # call the internal function that checks the input object is of the same class in all studies.
-  typ <- dsBaseClient::ds.class(df.name, datasources)
+  typ <- dsBaseClient:::checkClass(datasources, df.name)
   
   # Check whether the input is of type 'data.frame' or 'matrix'
- if(!('data.frame' %in% typ) && !('matrix' %in% typ)){
-  stop("Only objects of type 'data.frame' or 'matrix' are allowed for the  k-means clustering.", call.=FALSE)
- }
+  if(!('data.frame' %in% typ) && !('matrix' %in% typ)){
+   stop("Only objects of type 'data.frame' or 'matrix' are allowed for the  k-means clustering.", call.=FALSE)
+  }
   
 
-  # Check whether all columns in the data frame exist in every source
-  
-  column.names <- list()
-  for (i in 1:length(datasources)){
-    column.names[[i]] <- dsBaseClient::ds.colnames(df.name, datasources=datasources[i])[[1]]
-  }
-  
-  allNames <- unique(unlist(column.names))
-  
-  # if the data sets do not share the same columns then the function stops
-  check.indicator <- c()
-  for (i in 1:length(datasources)){
-    if(length(setdiff(allNames,column.names[[i]])) > 0){
-      check.indicator[i] <- 1
-    }else{
-      check.indicator[i] <- 0}
-  }
-  
-  if(!(sum(check.indicator)==0)){
-    stop("The data frames do not have the same columns. There are columns missing in some data frames!", call.=FALSE)
-  }
-  
-  
-  class.list <- lapply(allNames, function(x){dsBaseClient::ds.class(paste0(df.name, '$', x), datasources=datasources)})
-  class.vect1 <- lapply(class.list, function(x){unlist(x)})
-  class.vect2 <- lapply(class.vect1, function(x){x[which(x != 'NULL')[[1]]]})
-  class.vect2 <- unname(unlist(class.vect2))
-  
-  
-  # Check whether the columns in the data set are either of type numeric or integer
-  if(!('numeric' %in% class.vect2) && !('integer' %in% class.vect2)){
-    stop("The data frames contain columns which are not of type 'numeric' or 'integer'.", call.=FALSE)
-  }
+  checkColumnsDF1(df.name = df.name, datasources = datasources)
   
   
   # create a name by default if the user does not provide a name for the new variable

@@ -36,13 +36,17 @@ ds.cutree <- function(tree = NULL, k = NULL, h = NULL, newobj = NULL, datasource
   }
   
   
+  defined <- dsBaseClient:::isDefined(datasources, tree)
+  
+  
+  
   if(is.null(k) && is.null(h)){
     stop("Please provide a number for k or h for cutting the tree.", call.=FALSE)
   }
   
   
   # call the internal function that checks the input object is of the same class in all studies.
-  typ <- dsBaseClient::ds.class(tree, datasources)
+  typ <- dsBaseClient:::checkClass(datasources, tree)
 
   
   # Check whether the input is either of type data frame or matrix

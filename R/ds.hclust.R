@@ -37,8 +37,12 @@ ds.hclust <- function(diss = NULL, method = "ward.D2", newobj = NULL, datasource
   }
   
   
+  defined <- dsBaseClient:::isDefined(datasources, diss)
+  
+  
+  
   # call the internal function that checks the input object is of the same class in all studies.
-  typ <- dsBaseClient::ds.class(diss, datasources)
+  typ <- dsBaseClient:::checkClass(datasources, diss)
   
   
   # Check whether the input is of type 'dist'

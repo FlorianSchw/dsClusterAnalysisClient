@@ -28,7 +28,7 @@ test_that("ds.cutree errors", {
   expect_error(ds.cutree(tree = "D$LAB_TSC", k = 4), "Only objects of type 'hclust' are allowed.", fixed = TRUE)
   expect_error(ds.cutree(tree = "test_df1", k = 4), "Only objects of type 'hclust' are allowed.", fixed = TRUE)
   expect_error(ds.cutree(tree = "test_diss1", k = 4), "Only objects of type 'hclust' are allowed.", fixed = TRUE)
-  expect_error(ds.cutree(tree = "test_hclust2", k = 4), "There are some DataSHIELD errors, list them with datashield.errors()", fixed = TRUE)
+  expect_error(ds.cutree(tree = "test_hclust2", k = 4), " End of process!", fixed = TRUE)
   
   expect_silent(ds.cutree(tree = "test_hclust1", k = 4))
   expect_silent(ds.cutree(tree = "test_hclust1", k = 4, h = 10))

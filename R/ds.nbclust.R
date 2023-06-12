@@ -39,6 +39,10 @@ ds.nbclust <- function(df.name = NULL, diss = NULL, distance = "euclidean", min.
   }
   
   
+  defined <- dsBaseClient:::isDefined(datasources, df.name)
+  
+  
+  
   if(is.null(method)){
     stop("Please provide a method for the calculation!", call.=FALSE)
   }
@@ -55,7 +59,7 @@ ds.nbclust <- function(df.name = NULL, diss = NULL, distance = "euclidean", min.
   
   
   # call the internal function that checks the input object is of the same class in all studies.
-  typ <- dsBaseClient::ds.class(df.name, datasources)
+  typ <- dsBaseClient:::checkClass(datasources, df.name)
   
   
   # Check whether the input is either of type data frame or matrix
@@ -78,39 +82,8 @@ ds.nbclust <- function(df.name = NULL, diss = NULL, distance = "euclidean", min.
   
   
   
-  # Check whether all columns in the data frame exist in every source
+  checkColumnsDF2(df.name = df.name, datasources = datasources)
   
-  column.names <- list()
-  for (i in 1:length(datasources)){
-    column.names[[i]] <- dsBaseClient::ds.colnames(df.name, datasources=datasources[i])[[1]]
-  }
-  
-  allNames <- unique(unlist(column.names))
-  
-  # if the data sets do not share the same columns then the function stops
-  check.indicator <- c()
-  for (i in 1:length(datasources)){
-    if(length(setdiff(allNames,column.names[[i]])) > 0){
-      check.indicator[i] <- 1
-    }else{
-      check.indicator[i] <- 0}
-  }
-  
-  if(!(sum(check.indicator)==0)){
-    stop("The data frames do not have the same columns. There are columns missing in some data frames!", call.=FALSE)
-  }
-  
-  
-  class.list <- lapply(allNames, function(x){dsBaseClient::ds.class(paste0(df.name, '$', x), datasources=datasources)})
-  class.vect1 <- lapply(class.list, function(x){unlist(x)})
-  class.vect2 <- lapply(class.vect1, function(x){x[which(x != 'NULL')[[1]]]})
-  class.vect2 <- unname(unlist(class.vect2))
-  
-  
-  # Check whether the columns in the data set are either of type numeric or integer
-  if(!('numeric' %in% class.vect2)){
-    stop("The data frames contain columns which are not of type 'numeric'.", call.=FALSE)
-  }
   
   
   

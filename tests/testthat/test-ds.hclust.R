@@ -25,7 +25,7 @@ test_that("ds.hclust errors", {
   # Actual Test Start
   expect_error(ds.hclust(), "Please provide the name of the input object!", fixed = TRUE)
   expect_error(ds.hclust("D$LAB_TSC"),  "Only objects of type 'dist' are allowed for the computation of the clustering.", fixed = TRUE)
-  expect_error(ds.hclust("test_diss1"), "There are some DataSHIELD errors, list them with datashield.errors()", fixed = TRUE)
+  expect_error(ds.hclust("test_diss1"), " End of process!", fixed = TRUE)
   expect_error(ds.hclust("test_diss2", method = "wardD"), "Method needs to be one of the following: 'ward.D', 'ward.D2', 'single', 'complete', 'average', 'mcquitty', 'median' or 'centroid'.", fixed = TRUE)
   expect_silent(ds.hclust("test_diss2"))
   })

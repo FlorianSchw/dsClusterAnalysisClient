@@ -31,7 +31,7 @@ test_that("ds.dist errors", {
   
   ds.completeCases("D", newobj = "D_clean", datasources = ds.test_env$connections)
   
-  
+  ds.dataFrame(x = c("D$LAB_TSC", "D$DIS_DIAB"), newobj = "test_df6", datasources = ds.test_env$connections[1])
   
   # Actual Test Start
   expect_error(ds.dist(), "Please provide the name of the input object!", fixed = TRUE)
@@ -42,6 +42,7 @@ test_that("ds.dist errors", {
   expect_error(ds.dist("test_df4"), "The data frames contain columns which are not of type 'numeric' or 'integer'.", fixed = TRUE)
   expect_error(ds.dist("D_clean", method = "euclidea"), "Method needs to be one of the following: 'euclidean', 'maximum', 'manhattan', 'canberra', 'binary' or 'minkowski'.", fixed = TRUE)
   expect_error(ds.dist("D_clean", method = "x"), "Method needs to be one of the following: 'euclidean', 'maximum', 'manhattan', 'canberra', 'binary' or 'minkowski'.", fixed = TRUE)
+  expect_error(ds.dist("test_df6"))
 })
 
 
