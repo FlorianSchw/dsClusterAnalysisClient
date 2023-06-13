@@ -31,7 +31,7 @@
 #' 
 
 
-ds.varSelLcm_Test <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE, crit.varsel = "BIC", initModel = 50, nbcores = 1, nbSmall = 250, iterSmall = 20, nbKeep = 50, iterKeep = 1000, tolKeep = 1e-7, num.iterations = 5, newobj = NULL, datasources = NULL){
+ds.varSelLcm_Alternate2 <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE, crit.varsel = "BIC", initModel = 50, nbcores = 1, nbSmall = 250, iterSmall = 20, nbKeep = 50, iterKeep = 1000, tolKeep = 1e-7, num.iterations = 5, newobj = NULL, datasources = NULL){
   
   # look for DS connections
   if(is.null(datasources)){
@@ -69,8 +69,9 @@ ds.varSelLcm_Test <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE, cri
   
   
   # call the server side function that does the operation
-  cally <- call("varSelLcmDS1", df, num.clust, vbleSelec, crit.varsel, initModel, nbcores, nbSmall, iterSmall, nbKeep, iterKeep, tolKeep)
-  initialRun <- DSI::datashield.aggregate(datasources, cally)
+  newobj_first <- "cluster_ind"
+  cally <- call("varSelLcm_DA_DS1", df, num.clust, vbleSelec, crit.varsel, initModel, nbcores, nbSmall, iterSmall, nbKeep, iterKeep, tolKeep)
+  initialRun <- DSI::datashield.assign(datasources, newobj_first, cally)
   
   studies_in_analysis <- length(datasources)
   
@@ -84,7 +85,7 @@ ds.varSelLcm_Test <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE, cri
   }
   
   newobj_pre <- "cluster_pre"
-  callz <- call("varSelLcm_AlternateDS2", df, num.clust, vbleSelec, crit.varsel, initModel, nbcores, nbSmall, iterSmall, nbKeep, iterKeep, tolKeep, num.iterations)
+  callz <- call("varSelLcmDS2", df, num.clust, vbleSelec, crit.varsel, initModel, nbcores, nbSmall, iterSmall, nbKeep, iterKeep, tolKeep, num.iterations)
   DSI::datashield.assign(datasources, newobj_pre, callz)
   
   finalcheck <- dsBaseClient:::isAssigned(datasources, newobj_pre)
@@ -132,7 +133,7 @@ ds.varSelLcm_Test <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE, cri
   for (t in 1:length(new_vector_names)){
     tryCatch({
       
-
+      
       ds.dataFrameSubset(df.name = "Special_Clustering_Df",
                          V1.name = "Special_Clustering_Df$cluster_pre",
                          V2.name = paste0("Special_Clustering_Df$",new_vector_names[t]),
@@ -142,7 +143,7 @@ ds.varSelLcm_Test <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE, cri
       status_creation_dfs[[t]] <- "OK"
       
       new_dataframe_names[t] <- paste0("Special_Clustering_Df2_", t)
-
+      
     },
     
     #### Placeholder for now; there needs to be code that deals with failing DS function because of nfilter; if (error) then set to 0, 
@@ -238,63 +239,63 @@ ds.varSelLcm_Test <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE, cri
       
       if(test1){
         
+        
+        for (rr in 1:studies_in_analysis){
           
-          for (rr in 1:studies_in_analysis){
+          for (tt in 1:num.clust){
             
-            for (tt in 1:num.clust){
+            tryCatch(
               
-              tryCatch(
+              {ds.dataFrameSubset(df.name = "Special_Clustering_Factor",
+                                  V1.name = paste0("Special_Clustering_Factor$", row.names(factor_variables)[uu]),
+                                  V2.name = paste0("Special_Clustering_Factor$", factor_expressions[pp]),
+                                  Boolean.operator = "==",
+                                  newobj = paste0("Clustering_FactorLength_", pp),
+                                  datasources = datasources[rr])
                 
-                {ds.dataFrameSubset(df.name = "Special_Clustering_Factor",
-                                    V1.name = paste0("Special_Clustering_Factor$", row.names(factor_variables)[uu]),
-                                    V2.name = paste0("Special_Clustering_Factor$", factor_expressions[pp]),
-                                    Boolean.operator = "==",
-                                    newobj = paste0("Clustering_FactorLength_", pp),
-                                    datasources = datasources[rr])
-                
-                },
-                
-                #### Placeholder for now; there needs to be code that deals with failing DS function because of nfilter; if (error) then set to 0, 
-                #### doesn't matter for the clustering part whether it is 0, 1 or 2
-                
-                error = function(e){
-                 message("An Error Occured")
-                 print(e)
-                }
-              )
+              },
               
-              tryCatch(
-                {ds.dataFrameSubset(df.name = paste0("Clustering_FactorLength_", pp),
-                                    V1.name = paste0("Clustering_FactorLength_", pp, "$cluster_pre"),
-                                    V2.name = paste0("Clustering_FactorLength_", pp, "$Special_Clustering_vector_", tt),
-                                    Boolean.operator = "==",
-                                    newobj = paste0("XXXX_DS_Error_", tt),
-                                    datasources = datasources[rr])
-                  
-                  xxxx_check <- as.numeric(unlist(ds.length(x = paste0("XXXX_DS_Error_", tt, "$", row.names(factor_variables)[uu]), 
-                                                                  type = "split", datasources = datasources[rr])))
-                  
-                  experimental[[length_experimental + 1]] <- c(xxxx_check,
-                                                               uu,
-                                                               pp,
-                                                               rr,
-                                                               tt)
-                  
-                  length_experimental <- length(experimental)
-                  
-
-                },
-                #### Placeholder for better version
-                error = function(e){
-                  message("An Error Occured")
-                  print(e)
-                }
-              )
-
-            }
-
+              #### Placeholder for now; there needs to be code that deals with failing DS function because of nfilter; if (error) then set to 0, 
+              #### doesn't matter for the clustering part whether it is 0, 1 or 2
+              
+              error = function(e){
+                message("An Error Occured")
+                print(e)
+              }
+            )
+            
+            tryCatch(
+              {ds.dataFrameSubset(df.name = paste0("Clustering_FactorLength_", pp),
+                                  V1.name = paste0("Clustering_FactorLength_", pp, "$cluster_pre"),
+                                  V2.name = paste0("Clustering_FactorLength_", pp, "$Special_Clustering_vector_", tt),
+                                  Boolean.operator = "==",
+                                  newobj = paste0("XXXX_DS_Error_", tt),
+                                  datasources = datasources[rr])
+                
+                xxxx_check <- as.numeric(unlist(ds.length(x = paste0("XXXX_DS_Error_", tt, "$", row.names(factor_variables)[uu]), 
+                                                          type = "split", datasources = datasources[rr])))
+                
+                experimental[[length_experimental + 1]] <- c(xxxx_check,
+                                                             uu,
+                                                             pp,
+                                                             rr,
+                                                             tt)
+                
+                length_experimental <- length(experimental)
+                
+                
+              },
+              #### Placeholder for better version
+              error = function(e){
+                message("An Error Occured")
+                print(e)
+              }
+            )
+            
           }
-
+          
+        }
+        
       }
     }  
   }
@@ -377,7 +378,7 @@ ds.varSelLcm_Test <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE, cri
     additional_server <- seq(from = n, to = dim(order_object_both_variables)[1], by = studies_in_analysis)
     
     #### needs adjustment which columns to take into account
-
+    
     
     matching_indiv <- VarSelLCM::VarSelCluster(x = order_object_both_variables[c(first_server, additional_server), 
                                                                                !(colnames(order_object_both_variables) %in% exclude_list)],
@@ -445,11 +446,10 @@ ds.varSelLcm_Test <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE, cri
   
   
   outcome <- order_object_both_variables
-                  
-
+  
+  
   
   return(outcome)
   
 }
-  
-  
+

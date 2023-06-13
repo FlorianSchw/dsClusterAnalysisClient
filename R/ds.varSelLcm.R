@@ -67,31 +67,31 @@ ds.varSelLcm <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE, crit.var
     stop("Only objects of type 'data.frame' are allowed for the clustering.", call.=FALSE)
   }
   
-
+  
   # call the server side function that does the operation
   cally <- call("varSelLcmDS1", df, num.clust, vbleSelec, crit.varsel, initModel, nbcores, nbSmall, iterSmall, nbKeep, iterKeep, tolKeep)
   initialRun <- DSI::datashield.aggregate(datasources, cally)
   
   studies_in_analysis <- length(datasources)
   
-
+  
   study_data_names <-c()
   for (i in 1:length(datasources)){
     
-     ds.dmtC2S(dfdata = initialRun[[i]], newobj = paste0("StudyData", i), datasources = datasources[-i])
-     study_data_names[i] <- paste0("StudyData", i)
-     
+    ds.dmtC2S(dfdata = initialRun[[i]], newobj = paste0("StudyData", i), datasources = datasources[-i])
+    study_data_names[i] <- paste0("StudyData", i)
+    
   }
   
   newobj_pre <- "cluster_pre"
   callz <- call("varSelLcmDS2", df, num.clust, vbleSelec, crit.varsel, initModel, nbcores, nbSmall, iterSmall, nbKeep, iterKeep, tolKeep, num.iterations)
   DSI::datashield.assign(datasources, newobj_pre, callz)
-
+  
   finalcheck <- dsBaseClient:::isAssigned(datasources, newobj_pre)
   
   
   #### conns[1] wird als Argument genutzt in der datashield_descriptives function... that needs a change
-
+  
   df_classes <- datashieldDescriptives::datashield_descriptive(ds.class, opal_connection = conns[1], df = df)
   
   non_factor_variables <- df_classes %>%
@@ -109,10 +109,10 @@ ds.varSelLcm <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE, crit.var
   #### 1000 is still hard coded; needs change
   for (ii in 1:length(datasources)){
     for (k in 1:num.clust){
-    
+      
       ds.make(toAssign = rep(k, total_length[ii]), newobj = paste0("Special_Clustering_vector_", k), datasources = datasources[ii])
       new_vector_names[k] <- paste0("Special_Clustering_vector_", k)
-
+      
     }
   }
   
@@ -123,31 +123,36 @@ ds.varSelLcm <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE, crit.var
   list_means <- list()
   for (ii in 1:length(non_factor_variables[,1])){
     
-   list_means[[ii]] <- ds.meanSdGp(x = paste0("Special_Clustering_Df$", row.names(non_factor_variables)[ii]), y = "Special_Clustering_Df$cluster_pre", type = "split")
-
+    list_means[[ii]] <- ds.meanSdGp(x = paste0("Special_Clustering_Df$", row.names(non_factor_variables)[ii]), y = "Special_Clustering_Df$cluster_pre", type = "split")
+    
   }
   
   new_dataframe_names <- c()
+  status_creation_dfs <- list()
   for (t in 1:length(new_vector_names)){
     tryCatch({
-    
-     ds.dataFrameSubset(df.name = "Special_Clustering_Df",
-                        V1.name = "Special_Clustering_Df$cluster_pre",
-                        V2.name = paste0("Special_Clustering_Df$",new_vector_names[t]),
-                        Boolean.operator = "==",
-                        newobj = paste0("Special_Clustering_Df2_", t))
-  
-     new_dataframe_names[t] <- paste0("Special_Clustering_Df2_", t)
+      
+
+      ds.dataFrameSubset(df.name = "Special_Clustering_Df",
+                         V1.name = "Special_Clustering_Df$cluster_pre",
+                         V2.name = paste0("Special_Clustering_Df$",new_vector_names[t]),
+                         Boolean.operator = "==",
+                         newobj = paste0("Special_Clustering_Df2_", t))
+      
+      status_creation_dfs[[t]] <- "OK"
+      
+      new_dataframe_names[t] <- paste0("Special_Clustering_Df2_", t)
+
     },
-  
+    
     #### Placeholder for now; there needs to be code that deals with failing DS function because of nfilter; if (error) then set to 0, 
     #### doesn't matter for the clustering part whether it is 0, 1 or 2
-  
+    
     error = function(e){
-     message("An Error Occured")
-     print(e)
+      message("An Error Occured")
+      print(e)
     }
-  
+    
     )
   }
   
@@ -161,7 +166,7 @@ ds.varSelLcm <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE, crit.var
     for (ff in 1:length(factor_variables[,1])){
       
       tryCatch({
-      factor_levels[ff] <- ds.levels(x = paste0(new_dataframe_names[zz],"$", row.names(factor_variables)[ff]))
+        factor_levels[ff] <- ds.levels(x = paste0(new_dataframe_names[zz],"$", row.names(factor_variables)[ff]))
       },
       
       #### Placeholder for now; there needs to be code that deals with failing DS function because of nfilter; if (error) then set to 0, 
@@ -177,192 +182,205 @@ ds.varSelLcm <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE, crit.var
       
     }
     
-      new_factor_list[[zz]] <- factor_levels
+    new_factor_list[[zz]] <- factor_levels
     
   }   
-      
+  
   
   levels_appearing <- bind_rows(new_factor_list)
   levels_appearing_unique <- unique(as.numeric(levels_appearing$Levels))
   
   factor_expressions <- c()
-
-
+  
+  
   for (ii in 1:length(datasources)){
     
     for (zz in 1:length(levels_appearing_unique)){
-     
+      
       ds.make(toAssign = rep(levels_appearing_unique[zz], total_length[ii]), newobj = paste0("Special_Clustering_Factor_", zz), datasources = datasources[ii])
       factor_expressions[zz] <- paste0("Special_Clustering_Factor_", zz)
-
-    }
       
+    }
+    
   }    
-   
   
- ds.dataFrame(x = c(paste0(df), 
-                    "cluster_pre",
-                    paste0(factor_expressions),
-                    paste0(new_vector_names)), newobj = "Special_Clustering_Factor")
-   
-
- pivot_factor_list <- list()
- length_pivot_factor_list <- 0
- 
- #### At this point the data.frame is split into multiple df's depending on their individual cluster number in order to assess
- #### how the categorical values are distributed in the different clusters
- #### this might be challenging if the data is extreme between studies which could lead to < n.filter appearances of cluster numbers
- #### here we need a fail safe for the nfilter problem
- 
- new_list <- list()
- all_errors <- list()
- factorLength_names <- c()
- xxxx_vector <- c()
- 
- 
+  
+  ds.dataFrame(x = c(paste0(df), 
+                     "cluster_pre",
+                     paste0(factor_expressions),
+                     paste0(new_vector_names)), newobj = "Special_Clustering_Factor")
+  
+  
+  pivot_factor_list <- list()
+  length_pivot_factor_list <- 0
+  
+  #### At this point the data.frame is split into multiple df's depending on their individual cluster number in order to assess
+  #### how the categorical values are distributed in the different clusters
+  #### this might be challenging if the data is extreme between studies which could lead to < n.filter appearances of cluster numbers
+  #### here we need a fail safe for the nfilter problem
+  
+  new_list <- list()
+  factorLength_names <- c()
+  xxxx_vector <- c()
+  length_experimental <- 0
+  experimental <- list()
+  
+  
   for (uu in 1:length(factor_variables[,1])){
     
     factor_lengths <- list()
     
-
-      for (pp in 1:length(levels_appearing_unique)){
- 
-        test1 <- levels_appearing_unique[pp] %in% as.numeric(new_factor_list[[1]][[uu]]$Levels)
-        status2 <- "Fail"
-
-        if(test1){
-          tryCatch(
-            
-          {ds.dataFrameSubset(df.name = "Special_Clustering_Factor",
-                             V1.name = paste0("Special_Clustering_Factor$", row.names(factor_variables)[uu]),
-                             V2.name = paste0("Special_Clustering_Factor$", factor_expressions[pp]),
-                             Boolean.operator = "==",
-                             newobj = paste0("Clustering_FactorLength_", pp))
-            
-          factorLength_names[pp] <- paste0("Clustering_FactorLength_", pp)
+    
+    for (pp in 1:length(levels_appearing_unique)){
       
-          factor_lengths_tmp <- ds.meanSdGp(x = paste0("Clustering_FactorLength_", pp, "$", row.names(factor_variables)[uu]), 
-                                            y = paste0("Clustering_FactorLength_", pp, "$cluster_pre"), 
-                                            type = "split")[[3]]
-          status2 <- "OK"
+      test1 <- levels_appearing_unique[pp] %in% as.numeric(new_factor_list[[1]][[uu]]$Levels)
+      #status2 <- "Fail"
+      
+      if(test1){
+        
           
-          lengths_per_cluster <- ds.meanSdGp(x = paste0("Special_Clustering_Factor$", row.names(factor_variables)[uu]), 
-                                             y = "Special_Clustering_Factor$cluster_pre", 
-                                             type = "split")[[3]]
-          
-          
-          factor_lengths[[pp]] <- factor_lengths_tmp / lengths_per_cluster * 100
-          
-            if(!(is.null(factor_lengths[[pp]]))){
-          
-              pivot_variable <- as.data.frame(factor_lengths[[pp]]) %>%
-                pivot_longer(cols = everything(),
-                names_to = "Server",
-                values_to = paste0(row.names(factor_variables)[uu], "_", levels_appearing_unique[pp]))
-              
-              pivot_factor_list[[length_pivot_factor_list+1]] <- pivot_variable[2]
-              server_object <- unlist(pivot_variable[1])
-          
-              length_pivot_factor_list <- length(pivot_factor_list)
-
-            }
-          },
-          
-          #### Placeholder for now; there needs to be code that deals with failing DS function because of nfilter; if (error) then set to 0, 
-          #### doesn't matter for the clustering part whether it is 0, 1 or 2
-          
-          error = function(e){
-            message("An Error Occured")
-            print(e)
-          }
-          )
-          
-          
-          if(status2 == "Fail"){
+          for (rr in 1:studies_in_analysis){
             
-            for (rr in 1:studies_in_analysis){
+            for (tt in 1:num.clust){
               
-              xxxx_check <- list()
-              
-              for (tt in 1:num.clust){
+              tryCatch(
                 
+                {ds.dataFrameSubset(df.name = "Special_Clustering_Factor",
+                                    V1.name = paste0("Special_Clustering_Factor$", row.names(factor_variables)[uu]),
+                                    V2.name = paste0("Special_Clustering_Factor$", factor_expressions[pp]),
+                                    Boolean.operator = "==",
+                                    newobj = paste0("Clustering_FactorLength_", pp),
+                                    datasources = datasources[rr])
                 
-                tryCatch(
-                  {ds.dataFrameSubset(df.name = paste0("Clustering_FactorLength_", pp),
-                                      V1.name = paste0("Clustering_FactorLength_", pp, "$cluster_pre"),
-                                      V2.name = paste0("Clustering_FactorLength_", pp, "$Special_Clustering_vector_", tt),
-                                      Boolean.operator = "==",
-                                      newobj = paste0("XXXX_DS_Error_", tt),
-                                      datasources = datasources[rr])
-                    
-                    xxxx_check[[tt]] <- as.numeric(unlist(ds.length(x = paste0("Clustering_FactorLength_", pp, "$", row.names(factor_variables)[uu]), 
-                                                type = "split", datasources = datasources[rr])))
-                    
-                    xxxx_vector[tt] <- paste0("XXXX_DS_Error_", tt)
-                    
-                  },
-                  #### Placeholder for better version
-                  error = function(e){
-                    message("An Error Occured")
-                    print(e)
-                  }
-                )
-              }
+                },
+                
+                #### Placeholder for now; there needs to be code that deals with failing DS function because of nfilter; if (error) then set to 0, 
+                #### doesn't matter for the clustering part whether it is 0, 1 or 2
+                
+                error = function(e){
+                 message("An Error Occured")
+                 print(e)
+                }
+              )
               
-              
-              all_errors[[uu]] <- xxxx_check    
-              
+              tryCatch(
+                {ds.dataFrameSubset(df.name = paste0("Clustering_FactorLength_", pp),
+                                    V1.name = paste0("Clustering_FactorLength_", pp, "$cluster_pre"),
+                                    V2.name = paste0("Clustering_FactorLength_", pp, "$Special_Clustering_vector_", tt),
+                                    Boolean.operator = "==",
+                                    newobj = paste0("XXXX_DS_Error_", tt),
+                                    datasources = datasources[rr])
+                  
+                  xxxx_check <- as.numeric(unlist(ds.length(x = paste0("XXXX_DS_Error_", tt, "$", row.names(factor_variables)[uu]), 
+                                                                  type = "split", datasources = datasources[rr])))
+                  
+                  experimental[[length_experimental + 1]] <- c(xxxx_check,
+                                                               uu,
+                                                               pp,
+                                                               rr,
+                                                               tt)
+                  
+                  length_experimental <- length(experimental)
+                  
+
+                },
+                #### Placeholder for better version
+                error = function(e){
+                  message("An Error Occured")
+                  print(e)
+                }
+              )
+
             }
 
           }
 
-        }
+      }
     }  
   }
-   
+  
+  
   #### Re-Shaping factor object   
-  pivot_factor_df <- bind_cols(pivot_factor_list)
-  pivot_factor_df$Server <- server_object
-  pivot_factor_df$Cluster <- rep(1:num.clust, each = studies_in_analysis)
- 
- 
+  #pivot_factor_df <- bind_cols(pivot_factor_list)
+  
+  
+  experimental_df <- as.data.frame(t(bind_cols(experimental)))
+  
+  colnames(experimental_df) <- c("Length",
+                                 "uu",
+                                 "pp",
+                                 "Server",
+                                 "Cluster")
+  
+  experimental_df <- experimental_df %>%
+    mutate(Variable = paste0(row.names(factor_variables)[uu], "_", levels_appearing_unique[pp])) %>%
+    select(c(Server, Cluster, Variable, Length)) %>%
+    pivot_wider(names_from = Variable,
+                values_from = Length)
+  
+  
+  server_cluster_pairs <- data.frame(Server = rep(1:studies_in_analysis, num.clust),
+                                     Cluster = rep(1:num.clust, each = studies_in_analysis))
+  
+  rows_to_add <- server_cluster_pairs[which(!(interaction(server_cluster_pairs[1:2]) %in% interaction(experimental_df[1:2]))),]
+  
+  factor_length_df <- full_join(experimental_df, rows_to_add)
+  
+  for (uu in 1:length(factor_variables[,1])){
+    
+    current_vector <- factor_length_df %>%
+      select(contains(row.names(factor_variables)[uu])) %>%
+      rowSums()
+    
+    factor_length_df <- factor_length_df %>%
+      mutate(across(contains(row.names(factor_variables)[uu]), ~ .x / current_vector * 100))
+    
+  }
+  
+  factor_length_df <- factor_length_df %>%
+    mutate(Server = paste0("Server", Server))
+  
   ##### Re-shaping continuous variable means
   pivot_cont_object <- data.frame(matrix(NA,nrow = num.clust * studies_in_analysis, ncol = 1 ))
- 
+  
   for (o in 1:length(list_means)){
-   
+    
     pivot_variable <- as.data.frame(list_means[[o]][[1]]) %>%
       pivot_longer(cols = everything(),
                    names_to = "Server",
                    values_to = paste0(row.names(non_factor_variables)[o]))
-   
+    
     pivot_cont_object[[paste0(row.names(non_factor_variables)[o])]] <- unlist(pivot_variable[2])
     server_object <- unlist(pivot_variable[1])
-   
+    
   }
- 
+  
   pivot_cont_object <- pivot_cont_object[-1]
   pivot_cont_object$Server <- server_object
   pivot_cont_object$Cluster <- rep(1:num.clust, each = studies_in_analysis)
   
- 
+  
   #### Merging the cont. and cat. variable tables by cluster and server
-  order_object_both_variables <- left_join(x = pivot_cont_object, y = pivot_factor_df, by = c("Server", "Cluster"))
+  order_object_both_variables <- left_join(x = pivot_cont_object, y = factor_length_df, by = c("Server", "Cluster"))
   
   order_object_both_variables <- order_object_both_variables %>%
     relocate(c(Server,Cluster))
   
   
-  
-  
   matching_vector <- rep(NA, dim(order_object_both_variables)[1])
+  exclude_list <- c("Server", "Cluster",
+                    names(which(colSums(is.na(summ_df)) > 0)))
   
   for (n in 2:studies_in_analysis){
     
     first_server <- seq(from = 1, to = dim(order_object_both_variables)[1], by = studies_in_analysis)
     additional_server <- seq(from = n, to = dim(order_object_both_variables)[1], by = studies_in_analysis)
     
-    matching_indiv <- VarSelLCM::VarSelCluster(x = order_object_both_variables[c(first_server, additional_server),-c(1,2,11:19)],
+    #### needs adjustment which columns to take into account
+
+    
+    matching_indiv <- VarSelLCM::VarSelCluster(x = order_object_both_variables[c(first_server, additional_server), 
+                                                                               !(colnames(order_object_both_variables) %in% exclude_list)],
                                                gvals = num.clust)@partitions@zMAP
     
     matching_vector[first_server] <- 1:num.clust
@@ -378,7 +396,7 @@ ds.varSelLcm <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE, crit.var
     }
     matching_vector[additional_server] <- pos
   }
-
+  
   
   order_object_both_variables$Matching <- matching_vector
   matching_object <- subset(order_object_both_variables, select = c("Server", "Cluster", "Matching"))
@@ -391,7 +409,7 @@ ds.varSelLcm <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE, crit.var
       filter(Server == datasources[[zz]]@name)
     
     ds.dmtC2S(dfdata = final_match[[zz]], newobj = "ClusterMatching", datasources = datasources[zz])
-  
+    
   }
   
   obj_created_check <- dsBaseClient:::isAssigned(datasources, "ClusterMatching")
@@ -399,8 +417,8 @@ ds.varSelLcm <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE, crit.var
   
   if(is.null(newobj)){
     
-      newobj <- "ClusterFinal"
-
+    newobj <- "ClusterFinal"
+    
   }
   
   callx <- call("varSelLcmDS3", num.clust)
@@ -413,26 +431,25 @@ ds.varSelLcm <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE, crit.var
   #### in order to still see objects with dsLite
   
   #ds.rm(x.names = c("ClusterMatching",
-   #                 xxxx_vector,
-    #                "Special_Clustering_Factor",
-     #               factor_expressions,
-      #              new_vector_names,
-       #             new_dataframe_names,
-        #            "cluster_pre",
-         #           "Special_Clustering_Df",
-          #          study_data_names))
+  #                 xxxx_vector,
+  #                "Special_Clustering_Factor",
+  #               factor_expressions,
+  #              new_vector_names,
+  #             new_dataframe_names,
+  #            "cluster_pre",
+  #           "Special_Clustering_Df",
+  #          study_data_names))
+  
+  
+  
+  
+  
+  outcome <- order_object_both_variables
+                  
 
   
-  
-
-  
-  
-  
-  
-  return(order_object_both_variables)
-  
+  return(outcome)
   
 }
-
-# Aggregate funtion
-# ds.varSelLcm
+  
+  
