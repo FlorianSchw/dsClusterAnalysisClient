@@ -369,7 +369,7 @@ ds.varSelLcm <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE, crit.var
   
   matching_vector <- rep(NA, dim(order_object_both_variables)[1])
   exclude_list <- c("Server", "Cluster",
-                    names(which(colSums(is.na(summ_df)) > 0)))
+                    names(which(colSums(is.na(order_object_both_variables)) > 0)))
   
   for (n in 2:studies_in_analysis){
     

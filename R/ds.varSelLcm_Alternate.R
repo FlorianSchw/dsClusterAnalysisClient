@@ -368,8 +368,8 @@ ds.varSelLcm_Alternate <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE
   
   
   matching_vector <- rep(NA, dim(order_object_both_variables)[1])
-  exclude_list <- c("Server", "Cluster",
-                    names(which(colSums(is.na(summ_df)) > 0)))
+  #exclude_list <- c("Server", "Cluster",
+                    #names(which(colSums(is.na(order_object_both_variables)) > 0)))
   
   for (n in 2:studies_in_analysis){
     
@@ -378,15 +378,35 @@ ds.varSelLcm_Alternate <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE
     
     #### needs adjustment which columns to take into account
 
+    status <- TRUE
+    count <- 0
+    while(status){
     
-    matching_indiv <- VarSelLCM::VarSelCluster(x = order_object_both_variables[c(first_server, additional_server), 
-                                                                               !(colnames(order_object_both_variables) %in% exclude_list)],
-                                               gvals = num.clust)@partitions@zMAP
+      count <- count + 1
     
-    matching_vector[first_server] <- 1:num.clust
+      matching_indiv <- VarSelLCM::VarSelCluster(x = order_object_both_variables[c(first_server, additional_server), -c(1,2)
+                                                                               #!(colnames(order_object_both_variables) %in% exclude_list)
+                                                                               ],
+                                                gvals = num.clust)@partitions@zMAP
     
-    serv1 <- matching_indiv[seq(from = 1, to = length(matching_indiv)/2, by = 1)]
-    serv2 <- matching_indiv[seq(from = length(matching_indiv)/2 + 1, to = length(matching_indiv), by = 1)]
+      matching_vector[first_server] <- 1:num.clust
+    
+      serv1 <- matching_indiv[seq(from = 1, to = length(matching_indiv)/2, by = 1)]
+      serv2 <- matching_indiv[seq(from = length(matching_indiv)/2 + 1, to = length(matching_indiv), by = 1)]
+      
+      status1 <- all(seq(1:num.clust) %in% serv1)
+      status2 <- all(seq(1:num.clust) %in% serv2)
+      
+      if(all(status1, status2)){
+        status <- FALSE
+      }
+      
+      if(count > 250){
+        status <- FALSE
+      }
+      
+    }  
+      
     
     pos <- c()
     for (ll in 1:length(serv2)){
