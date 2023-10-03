@@ -26,7 +26,6 @@
 #' @import dsBaseClient
 #' @import methods
 #' @import dplyr
-#' @import datashieldDescriptives
 #' @export
 #' 
 
