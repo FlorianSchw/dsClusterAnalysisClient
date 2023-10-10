@@ -66,15 +66,70 @@ ds.varSelLcm <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE, crit.var
     stop("Only objects of type 'data.frame' are allowed for the clustering.", call.=FALSE)
   }
   
+  studies_in_analysis <- length(datasources)
   
+  if(is.null(newobj)){
+    
+    newobj <- "ClusterFinal"
+    
+  }
+  
+  if(studies_in_analysis == 1){
+    
+    call_single <- call("varSelLcmSingleDS1", df, num.clust, vbleSelec, crit.varsel, initModel, nbcores, nbSmall, iterSmall, nbKeep, iterKeep, tolKeep)
+    DSI::datashield.assign(datasources, newobj, call_single)
+    
+    message <- paste0("The clusters have been successfully assigned on the server-side.")
+    return(message)
+    
+
+  } else if(studies_in_analysis > 1){
+    
+  
+
   
   # call the server side function that does the operation
   cally <- call("varSelLcmDS1", df, num.clust, vbleSelec, crit.varsel, initModel, nbcores, nbSmall, iterSmall, nbKeep, iterKeep, tolKeep)
   initialRun <- DSI::datashield.aggregate(datasources, cally)
   
-  studies_in_analysis <- length(datasources)
   
   message("1st part completed.")
+  
+  
+  
+  server_col_names <- list()
+  
+  for (i in 1:length(datasources)){
+    
+    curr_server_name <- eval(parse(text=paste0("initialRun$", datasources[[i]]@name)))
+    server_col_names[[i]] <- names(curr_server_name)
+    
+  }
+  
+  server_col_names_comb <- unique(unlist(server_col_names))
+  
+  initialRun_mod <- data.frame(matrix(nrow = num.clust, ncol = length(server_col_names_comb)))
+  colnames(initialRun_mod) <- server_col_names_comb
+  
+  initialRun_mod_list <- list()
+  
+  for (i in 1:length(datasources)){
+    
+    initialRun_mod_list[[i]] <- initialRun_mod
+  }
+  
+  names(initialRun_mod_list) <- names(initialRun)
+  
+  for (k in 1:length(initialRun_mod_list)){
+    for (i in 1:length(server_col_names_comb)){
+      if(server_col_names_comb[i] %in% server_col_names[[k]]){
+        
+        initialRun_mod_list[[k]][,server_col_names_comb[i]] <- initialRun[[k]][,server_col_names_comb[i]]
+        
+      }
+    }
+  }
+  
   
   
   ######################################
@@ -84,8 +139,8 @@ ds.varSelLcm <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE, crit.var
   
   variables_number <- ds.dim(x = df, type = "combine")[[1]][2]
   
-  initialRun_char_vect <- paste0(as.character(unlist(initialRun)), collapse = ",")
-  colnames_char_vect <- paste0(as.character(colnames(initialRun[[1]])), collapse = ",")
+  initialRun_char_vect <- paste0(as.character(unlist(initialRun_mod_list)), collapse = ",")
+  colnames_char_vect <- paste0(as.character(colnames(initialRun_mod_list[[1]])), collapse = ",")
   entries_per_study <- variables_number * num.clust
   
   ######################################
@@ -214,12 +269,7 @@ ds.varSelLcm <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE, crit.var
   order_object$Matching <- matching_vector
   matching_object <- subset(order_object, select = c("ServerName", "results_values", "Matching"))
   
-  if(is.null(newobj)){
-    
-    newobj <- "ClusterFinal"
-    
-  }
-  
+
   
   for (zz in 1:length(datasources)){
     
@@ -255,5 +305,7 @@ ds.varSelLcm <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE, crit.var
   
   
   return(outcome)
+  
+  }
   
 }
