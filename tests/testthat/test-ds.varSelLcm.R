@@ -6,3 +6,8 @@ test_that("datashield_descriptive Errors", {
   expect_silent(case1)
   
 })
+
+
+
+?str_replace
+?regex

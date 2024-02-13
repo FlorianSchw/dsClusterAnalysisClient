@@ -8,7 +8,7 @@
 
 #### Is dsBase and dsBaseClient really necessary??
 #remotes::install_github("datashield/dsBase", ref = "6.3.0", dependencies=TRUE)
-remotes::install_github("FlorianSchw/dsClusterAnalysis", dependencies=TRUE)
+#remotes::install_github("FlorianSchw/dsClusterAnalysis", dependencies=TRUE)
 
 remotes::install_github('datashield/DSLite')
 remotes::install_github('datashield/DSOpal')

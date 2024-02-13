@@ -1,7 +1,10 @@
 
 #### Path important for testing and check
-FullData <- read.csv("testsets/TestData_Clustering.csv", sep = ";", dec = ",")
-str(FullData)
+FullData <- as.data.frame(read.csv("testsets/TestData_Clustering.csv", sep = ";", dec = ","))
+FullData <- as.data.frame(read.csv("tests/testthat/testsets/TestData_Clustering.csv", sep = ";", dec = ","))
+
+#FullData <- TestData_Clustering
+#class(FullData)
 
 #### Re-adjust unit type
 FullData$Sex <- as.factor(FullData$Sex)
@@ -9,6 +12,8 @@ FullData$Education <- as.factor(FullData$Education)
 FullData$Hypertension <- as.factor(FullData$Hypertension)
 FullData$Eyes <- as.factor(FullData$Eyes)
 FullData$Children <- as.integer(FullData$Children)
+
+FullData <- subset(FullData, select = -c(1))
 
 #### From here on specific cases could be made
 Data1 <- FullData[c(1:2500),]
@@ -41,5 +46,4 @@ logindata.dslite.data <- data.frame(server = c("Server1", "Server2", "Server3", 
 
 #### Login to the 4 different DSLite Servers
 conns <<- DSI::datashield.login(logindata.dslite.data, assign=TRUE, symbol = "D")
-
 
