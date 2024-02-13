@@ -49,8 +49,6 @@ ds.varSelLcm(
 \item{newobj}{is a logical or integer specifying whether tracing information on the progress of the algorithm is procuded for the Hartigan-Wong algorithm}
 
 \item{datasources}{a list of \code{\link{DSConnection-class}} objects obtained after login}
-
-\item{discrim}{is a logical or integer specifying whether tracing information on the progress of the algorithm is procuded for the Hartigan-Wong algorithm}
 }
 \value{
 the object specified by the \code{newobj} argument of \code{ds.kmeans} or default name \code{kmeans.newobj}

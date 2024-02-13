@@ -11,7 +11,6 @@
 #' @param crit.varsel relates to the number of random sets if clusters is a number and not a set of initial cluster centers
 #' @param initModel refers to the algorithm of calculating the kmeans and can be either 'Hartigan-Wong', 'Lloyd', 'Forgy' or 'MacQueen' 
 #' @param nbcores is the name of the new object which is created with this function
-#' @param discrim is a logical or integer specifying whether tracing information on the progress of the algorithm is procuded for the Hartigan-Wong algorithm
 #' @param nbSmall is a logical or integer specifying whether tracing information on the progress of the algorithm is procuded for the Hartigan-Wong algorithm
 #' @param iterSmall is a logical or integer specifying whether tracing information on the progress of the algorithm is procuded for the Hartigan-Wong algorithm
 #' @param nbKeep is a logical or integer specifying whether tracing information on the progress of the algorithm is procuded for the Hartigan-Wong algorithm
@@ -25,7 +24,7 @@
 #' @import DSI
 #' @import dsBaseClient
 #' @import methods
-#' @import dplyr
+#' @importFrom magrittr %>%
 #' @export
 #' 
 
