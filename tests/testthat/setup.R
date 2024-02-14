@@ -1,7 +1,7 @@
 
 #### Path important for testing and check
-FullData <- as.data.frame(read.csv("testsets/TestData_Clustering.csv", sep = ";", dec = ","))
-FullData <- as.data.frame(read.csv("tests/testthat/testsets/TestData_Clustering.csv", sep = ";", dec = ","))
+#FullData <- as.data.frame(read.csv("testsets/TestData_Clustering.csv", sep = ";", dec = ","))
+FullData <- as.data.frame(read.csv("tests/testthat/testsets/TestData_Clustering.csv", sep = ",", dec = "."))
 
 #FullData <- TestData_Clustering
 #class(FullData)
@@ -13,7 +13,7 @@ FullData$Hypertension <- as.factor(FullData$Hypertension)
 FullData$Eyes <- as.factor(FullData$Eyes)
 FullData$Children <- as.integer(FullData$Children)
 
-FullData <- subset(FullData, select = -c(1))
+#FullData <- subset(FullData, select = -c(1))
 
 #### From here on specific cases could be made
 Data1 <- FullData[c(1:2500),]
