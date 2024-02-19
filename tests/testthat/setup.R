@@ -1,7 +1,7 @@
 
 #### Path important for testing and check
-#FullData <- as.data.frame(read.csv("testsets/TestData_Clustering.csv", sep = ";", dec = ","))
-FullData <- as.data.frame(read.csv("tests/testthat/testsets/TestData_Clustering.csv", sep = ",", dec = "."))
+FullData <- as.data.frame(read.csv("testsets/TestData_Clustering.csv", sep = ",", dec = "."))
+#FullData <- as.data.frame(read.csv("tests/testthat/testsets/TestData_Clustering.csv", sep = ",", dec = "."))
 
 #FullData <- TestData_Clustering
 #class(FullData)
@@ -16,10 +16,10 @@ FullData$Children <- as.integer(FullData$Children)
 #FullData <- subset(FullData, select = -c(1))
 
 #### From here on specific cases could be made
-Data1 <- FullData[c(1:2500),]
-Data2 <- FullData[c(2501:5000),]
-Data3 <- FullData[c(5001:7500),]
-Data4 <- FullData[c(7501:10000),]
+Data1 <- FullData[c(1:500),]
+Data2 <- FullData[c(501:1000),]
+Data3 <- FullData[c(1001:1500),]
+Data4 <- FullData[c(1501:2000),]
 
 
 #### Defining the server-side data

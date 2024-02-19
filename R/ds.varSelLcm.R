@@ -25,6 +25,8 @@
 #' @import dsBaseClient
 #' @import methods
 #' @importFrom magrittr %>%
+#' @import dplyr
+#' @import VarSelLCM
 #' @export
 #' 
 
@@ -54,16 +56,16 @@ ds.varSelLcm <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE, crit.var
     stop("The number of iterations should be more than 1.", call.=FALSE)
   }
   
-  defined <- dsBaseClient:::isDefined(datasources, df)
+  # defined <- dsBaseClient:::isDefined(datasources, df)
   
   
-  # call the internal function that checks the input object is of the same class in all studies.
-  typ <- dsBaseClient:::checkClass(datasources, df)
-  
-  # Check whether the input is of type 'data.frame' or 'matrix'
-  if(!('data.frame' %in% typ)){
-    stop("Only objects of type 'data.frame' are allowed for the clustering.", call.=FALSE)
-  }
+  # # call the internal function that checks the input object is of the same class in all studies.
+  # typ <- dsBaseClient:::checkClass(datasources, df)
+  # 
+  # # Check whether the input is of type 'data.frame' or 'matrix'
+  # if(!('data.frame' %in% typ)){
+  #   stop("Only objects of type 'data.frame' are allowed for the clustering.", call.=FALSE)
+  # }
   
   studies_in_analysis <- length(datasources)
   
@@ -170,8 +172,8 @@ ds.varSelLcm <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE, crit.var
   discrim_data <- list()
   irrelevant_names <- list()
   
-  performance <- as.data.frame(matrix(nrow = studies_in_analysis, ncol = 6))
-  colnames(performance) <- c("ServerName", "Loglikelihood", "AIC", "BIC", "ICL", "Davies_Bouldin")
+  performance <- as.data.frame(matrix(nrow = studies_in_analysis, ncol = 5))
+  colnames(performance) <- c("ServerName", "Loglikelihood", "AIC", "BIC", "ICL")
   
   for (i in 1:length(results_obj)){
     
@@ -184,35 +186,40 @@ ds.varSelLcm <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE, crit.var
     performance[i, "AIC"] <- results_obj[[i]][[5]]
     performance[i, "BIC"] <- results_obj[[i]][[6]]
     performance[i, "ICL"] <- results_obj[[i]][[7]]
-    performance[i, "Davies_Bouldin"] <- results_obj[[i]][[8]]
-    
+
   }
   
-  comparison_obj <- bind_rows(summary_data)
+  #message(paste0("Irrelevant Names: ", irrelevant_names))
+  
+  
+  comparison_obj <- dplyr::bind_rows(summary_data)
   
   order_object <- comparison_obj %>%
-    relocate(c(ServerName,results_values))
+    dplyr::relocate(c(ServerName,results_values))
   
   
   exclude_list <- c("ServerName", "results_values")
   
   
-  variable_to_be_excluded <- unique(unlist(irrelevant_names))
-  position_col <- c()
+  # variable_to_be_excluded <- unique(unlist(irrelevant_names))
+  # position_col <- c()
+  # 
+  # for (e in 1:length(colnames(order_object))){
+  #   
+  #   
+  #   logi_int <- strsplit(colnames(order_object), "_X_")[[e]][2] %in% variable_to_be_excluded
+  #   position_col[e] <- logi_int
+  #   
+  # }
+  # 
+  # final_exclude_list <- c(exclude_list,
+  #                         colnames(order_object)[position_col])
   
-  for (e in 1:length(colnames(order_object))){
-    
-    
-    logi_int <- strsplit(colnames(order_object), "_X_")[[e]][2] %in% variable_to_be_excluded
-    position_col[e] <- logi_int
-    
-  }
+  final_exclude_list <- c(exclude_list)
   
-  final_exclude_list <- c(exclude_list,
-                          colnames(order_object)[position_col])
+  #message("works until before matching.")
   
-  
-  variable_importance <- bind_rows(discrim_data)
+  variable_importance <- dplyr::bind_rows(discrim_data)
   #variable_irrelevance <- bind_rows(irrelevant_names)
   
   
@@ -224,7 +231,14 @@ ds.varSelLcm <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE, crit.var
     additional_server <- seq(from = (n-1)*num.clust + 1, to = (n)*num.clust, by = 1)
     
     #### needs adjustment which columns to take into account
+    message("works until after choosing server.")
     
+    # message(paste0("First Server: ", as.character(first_server)))
+    # message(paste0("Additional Server:", as.character(additional_server)))
+    # message(paste0("Colnames Order Object:", as.character(colnames(order_object))))
+    # message(paste0("Final Exclude List:", as.character(final_exclude_list)))
+    
+
     status <- TRUE
     count <- 0
     while(status){
@@ -234,7 +248,10 @@ ds.varSelLcm <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE, crit.var
       matching_cluster <- VarSelLCM::VarSelCluster(x = order_object[c(first_server, additional_server), !(colnames(order_object) %in% final_exclude_list)],
                                                    gvals = num.clust)
       
+      message("works until after model building.")
+
       matching_indiv <- matching_cluster@partitions@zMAP
+      
       
       matching_vector[first_server] <- 1:num.clust
       
@@ -255,6 +272,9 @@ ds.varSelLcm <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE, crit.var
     }  
     
     
+    message("works until before positioning.")
+    
+    
     pos <- c()
     for (ll in 1:length(serv2)){
       
@@ -263,6 +283,8 @@ ds.varSelLcm <- function(df = NULL, num.clust = NULL, vbleSelec = TRUE, crit.var
     }
     matching_vector[additional_server] <- pos
   }
+  
+  message("works until after matching.")
   
   
   order_object$Matching <- matching_vector
