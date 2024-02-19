@@ -7,7 +7,7 @@ License: GPL-3 + file LICENSE
 Title: DataSHIELD client side functions for the dsClusterAnalysisClient package
 Description: Client side functions to perform non-disclosive cluster analysis with DataSHIELD.
 Depends: 
-  R(>= 4.0.0)
+  R(>= 4.1.0)
 Imports: 
   DSI (>= 1.3.0),
   methods,
