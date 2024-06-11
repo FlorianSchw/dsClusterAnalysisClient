@@ -1,5 +1,5 @@
 #'
-#' @title Conducts k-means clustering of a given data set
+#' @title Conducts clustering using the VarSelLCM R function
 #' @description This function is similar to the native R function 'kmeans' from stats
 #' @details The function calls the server-side function \code{kmeansDS} that computes the
 #' k-means clustering of a data set (type 'data.frame' or 'matrix'). 
