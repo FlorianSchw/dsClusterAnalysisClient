@@ -2,7 +2,7 @@ Package: dsClusterAnalysisClient
 Type: Package
 Maintainer: <Florian.Schwarz@dife.de>
 Author: <Florian.Schwarz@dife.de>
-Version: 1.0.0
+Version: 1.0.1
 License: GPL-3 + file LICENSE
 Title: DataSHIELD client side functions for the dsClusterAnalysisClient package
 Description: Client side functions to perform non-disclosive cluster analysis with DataSHIELD.
@@ -13,6 +13,7 @@ Imports:
   methods,
   magrittr,
   dplyr,
+  Matrix,
   VarSelLCM,
   dsBaseClient(>= 6.3.0),
 RoxygenNote: 7.3.1
@@ -25,8 +26,7 @@ Suggests:
     DSOpal,
     dsBase(>= 6.3.0),
     remotes,
-    devtools,
     dsClusterAnalysis
-Remotes: datashield/dsBaseClient, datashield/dsBase, FlorianSchw/dsClusterAnalysis
+Remotes: cran/Matrix@1.6-5,datashield/dsBaseClient, datashield/dsBase, FlorianSchw/dsClusterAnalysis
 Config/testthat/edition: 3
 VignetteBuilder: knitr
