@@ -12,7 +12,7 @@ Imports:
   DSI (>= 1.3.0),
   methods,
   magrittr,
-  dplyr,
+  dplyr(>= 1.1.1),
   Matrix,
   VarSelLCM,
   dsBaseClient(>= 6.3.0),
@@ -27,6 +27,6 @@ Suggests:
     dsBase(>= 6.3.0),
     remotes,
     dsClusterAnalysis
-Remotes: cran/Matrix@1.6-5,datashield/dsBaseClient, datashield/dsBase, FlorianSchw/dsClusterAnalysis
+Remotes: cran/Matrix@1.6-5, datashield/dsBaseClient@6.3.0, datashield/dsBase@6.3.0, FlorianSchw/dsClusterAnalysis
 Config/testthat/edition: 3
 VignetteBuilder: knitr
