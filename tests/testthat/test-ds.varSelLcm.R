@@ -1,4 +1,4 @@
-test_that("datashield_descriptive Errors", {
+test_that("varSelLCM Error", {
   
   case1 <- ds.varSelLcm(df = "D", 
                         num.clust = 2)

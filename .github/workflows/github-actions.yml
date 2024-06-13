@@ -26,10 +26,10 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          # Test the package on Linux OS and latest / 4.3.0 & 4.0.0 R Version
+          # Test the package on Linux OS and latest / 4.3.0 & 4.1.0 R Version
           - {os: ubuntu-latest,   r: 'release'}
           - {os: ubuntu-latest,   r: '4.3.0'}
-          - {os: ubuntu-latest,   r: '4.0.0'}
+          - {os: ubuntu-latest,   r: '4.1.0'}
           
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
