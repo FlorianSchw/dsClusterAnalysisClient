@@ -2,7 +2,7 @@
 % Please edit documentation in R/ds.varSelLcm.R
 \name{ds.varSelLcm}
 \alias{ds.varSelLcm}
-\title{Conducts k-means clustering of a given data set}
+\title{Conducts clustering using the VarSelLCM R function}
 \usage{
 ds.varSelLcm(
   df = NULL,
